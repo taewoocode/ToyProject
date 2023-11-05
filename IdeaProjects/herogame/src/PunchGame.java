@@ -25,7 +25,7 @@ public class PunchGame {
 
         }
 
-        if (leona.getHealth() == 0) {g
+        if (leona.getHealth() == 0) {
             System.out.println("아서스 승리!");
 
         }
