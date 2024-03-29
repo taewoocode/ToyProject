@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="join_style.css" />
+    <title>Dendrobium</title>
+  </head>
+
+  <body>
+      <nav>
+        <div class="logo">
+          <a href="#">Toy Project</a>
+        </div>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="blog.html">Blog</a>
+          <a href="login.html">Login</a>
+          <a href="join.html">Join</a>
+        </div>
+      </nav>
+
+    <div class="body">
+        <form th:action="@{/user/signup}" th:object="${userCreateForm}" method="post">
+          <div th:replace="~{form_errors :: formErrorsFragment}"></div>
+          <div class="card">
+            <h1>Join</h1>
+    
+            <div class="form">
+              <input type="text" th:field="*{username}" placeholder="UserID">
+              <input type="password" th:field="*{password1}" placeholder="Password">
+              <input type="password" th:field="*{password2}" placeholder="Password">
+              <input type="email" th:field="*{email}" placeholder="email">
+              <button type="submit">회원가입</button>
+            </div>
+        </form>
+    </div>
+    
+    <footer>
+      <div class="socials">
+        <i class="bx bxl-facebook-square"></i>
+        <i class="bx bxl-instagram"></i>
+        <i class="bx bxl-twitter"></i>
+        <i class="bx bxl-linkedin-square"></i>
+      </div>
+      <p>Copyright ©2024, All rights reserved.</p>
+    </footer>
+    
+  </body>
+</html>
