@@ -1,18 +1,57 @@
-apiVersion: autoscaling/v2beta2
-kind: HorizontalPodAutoscaler
+apiVersion: v1
+kind: Service
 metadata:
-  name: hpa-resource-cpu
+  name: my-nginx-service3
 spec:
-  maxReplicas: 10 # 최대 레플리카 수
-  minReplicas: 2 # 최소 레플리카 수
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: stateless-cpu1
-  metrics:
-  - type: Resource 
-    resource:
-      name: cpu
-      target:
-        type: Utilization
-        averageUtilization: 50 # 평균 CPU 사용량이 50% 이상인 경우 Scale Out 이하인 경우 Scale In
+  selector:
+    app: my-nginx-app3
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-nginx-deployment3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-nginx-app3
+  template:
+    metadata:
+      labels:
+        app: my-nginx-app3
+    spec:
+      containers:
+        - name: my-nginx-container
+          image: rlaaudgus/my-test3:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 200m  # CPU 요청을 200m (0.2 CPU)로 증가시킵니다.
+              memory: 256Mi  # 메모리 요청을 256Mi로 증가시킵니다.
+            limits:
+              cpu: 500m  # CPU 제한을 500m (0.5 CPU)로 증가시킵니다.
+              memory: 512Mi  # 메모리 제한을 512Mi로 증가시킵니다.
+
+---
+
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: my-nginx-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: my-nginx-deployment3
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 40
+
