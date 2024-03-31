@@ -4,5 +4,5 @@ resources:
 - deployment.yaml
 - service.yaml
 images:
-- name: yellowsunn/my-api-server
-  newTag: "20230225070629"
+- name: 
+  newTag: "docekr -tag"

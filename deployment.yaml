@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: my-api-server
-        image: yellowsunn/my-api-server
+        image: 
         ports:
         - containerPort: 8080
