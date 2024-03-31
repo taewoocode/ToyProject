@@ -1,0 +1,56 @@
+pipeline {
+    agent any
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    credentialsId: 'github_access_token',
+                    url: 'https://github.com/yiminsoo/ToyProject'
+            }
+        }
+        
+        stage('Pull git repository') {
+            steps {
+                git branch: 'main',
+                    credentialsId: 'github_access_token',
+                    url: 'https://github.com/yiminsoo/ToyProject',
+                    changelog: false
+            }
+        }
+        
+        stage('Install kustomize') {
+            steps {
+                sh """
+                    if [ ! -f "${env.WORKSPACE}/kustomize" ]; then
+                        curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+                    fi
+                    ${env.WORKSPACE}/kustomize version
+                """
+            }
+        }
+        
+        stage('Change img tag') {
+            steps {
+                sh """
+                    cd $baseDirectory
+                    ${env.WORKSPACE}/kustomize edit set image $imageName:$tag
+                """
+            }
+        }
+        
+        stage('Push to manifest repo') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'github-access-token', passwordVariable: 'gitPassword', usernameVariable: 'gitUsername'), string(credentialsId: 'github_email', variable: 'gitEmail')]) {
+                    sh """
+                        git config user.email $gitEmail
+                        git config user.name $gitUsername
+                        git add -A
+                        git commit -m '[jenkins] update image tag = $imageName:$tag'
+                        git push https://${gitUsername}:${gitPassword}@github.com/yiminsoo/ToyProject.git
+                    """
+                }
+            }
+        }
+    }
+}
+
