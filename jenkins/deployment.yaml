@@ -22,7 +22,7 @@ spec:
             runAsUser: 0
           resources:
             limits:
-              memory: "2Gi"
+              memory: "3Gi"  # 메모리를 3Gi로 수정
               cpu: "1000m"
             requests:
               memory: "500Mi"
@@ -52,7 +52,10 @@ spec:
             - name: jenkins-data
               mountPath: /var/jenkins_home
             - name: docker-socket
-              mountPath: /run/docker.sock
+              mountPath: /var/run/docker.sock
+            - name: docker-binary
+              mountPath: /usr/bin/docker
+              readOnly: true  # 읽기 전용으로 마운트
       volumes:
         - name: jenkins-data
           persistentVolumeClaim:
@@ -60,4 +63,7 @@ spec:
         - name: docker-socket
           hostPath:
             path: /run/docker.sock
+        - name: docker-binary
+          hostPath:
+            path: /usr/bin/docker
 
