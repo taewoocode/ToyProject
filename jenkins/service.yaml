@@ -2,19 +2,16 @@ apiVersion: v1
 kind: Service
 metadata:
   name: jenkins-service
-  namespace: jenkins
+  namespace: devops-tools
   annotations:
-    prometheus.io/scrape: 'true'
-    prometheus.io/path:   /
-    prometheus.io/port:   '8080'
+      prometheus.io/scrape: 'true'
+      prometheus.io/path:   /
+      prometheus.io/port:   '8080'
 spec:
-  selector:
+  selector: 
     app: jenkins-server
-  type: NodePort
+  type: NodePort  
   ports:
-    - port: 8080   # 외부 포트를 8080으로 변경
-      targetPort: 8080   # 대상 포트도 8080으로 유지
+    - port: 8080
+      targetPort: 8080
       nodePort: 32000
-  externalTrafficPolicy: Local #Jenkins가 NodePort/LoadBalancer 서비스의 지원을 받는 수신 컨트롤러를 사용하여 Kubernetes에서 실행 중인 경우 필요옵션
-      
-

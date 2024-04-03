@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: jenkins
-  namespace: jenkins
+  namespace: devops-tools
 spec:
   replicas: 1
   selector:
@@ -13,13 +13,13 @@ spec:
       labels:
         app: jenkins-server
     spec:
-      securityContext:
-            fsGroup: 1000 
-            runAsUser: 1000
       serviceAccountName: jenkins-admin
       containers:
         - name: jenkins
           image: jenkins/jenkins:lts
+          securityContext:
+            allowPrivilegeEscalation: true
+            runAsUser: 0
           resources:
             limits:
               memory: "2Gi"
@@ -50,8 +50,14 @@ spec:
             failureThreshold: 3
           volumeMounts:
             - name: jenkins-data
-              mountPath: /var/jenkins_home         
+              mountPath: /var/jenkins_home
+            - name: docker-socket
+              mountPath: /run/docker.sock
       volumes:
         - name: jenkins-data
           persistentVolumeClaim:
               claimName: jenkins-pv-claim
+        - name: docker-socket
+          hostPath:
+            path: /run/docker.sock
+
